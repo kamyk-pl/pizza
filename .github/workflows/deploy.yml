@@ -1,0 +1,93 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Configure Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Create gh-pages branch if it doesn't exist
+      run: |
+        git fetch origin
+        if ! git rev-parse --verify origin/gh-pages > /dev/null 2>&1; then
+          git checkout --orphan gh-pages
+          git rm -rf .
+          echo "# GitHub Pages" > README.md
+          git add README.md
+          git commit -m "Initial gh-pages commit"
+          git push origin gh-pages
+          git checkout main || git checkout master
+        fi
+
+    - name: Deploy to gh-pages branch
+      run: |
+        # Get the current branch name
+        CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+        # Create a temporary directory for gh-pages content
+        mkdir -p /tmp/gh-pages-content
+
+        # Copy dist folder contents to temp directory
+        cp -r dist/* /tmp/gh-pages-content/
+
+        # Switch to gh-pages branch
+        git fetch origin gh-pages
+        git checkout gh-pages
+
+        # Clear existing content (except .git)
+        find . -maxdepth 1 ! -name '.git' ! -name '.' ! -name '..' -exec rm -rf {} \;
+
+        # Copy new content from temp directory
+        cp -r /tmp/gh-pages-content/* .
+
+        # Add all changes
+        git add .
+
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to deploy"
+        else
+          # Commit changes
+          git commit -m "Deploy from $CURRENT_BRANCH - $(date)"
+
+          # Push to gh-pages
+          git push origin gh-pages
+        fi
+
+        # Clean up
+        rm -rf /tmp/gh-pages-content
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
