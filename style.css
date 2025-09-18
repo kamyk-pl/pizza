@@ -1,0 +1,231 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.container {
+    text-align: center;
+    z-index: 10;
+    position: relative;
+}
+
+.title {
+    font-size: 3.5rem;
+    color: #ffd700;
+    text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+    }
+    to {
+        text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700, 0 0 80px #ffd700;
+    }
+}
+
+.countdown-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.time-unit {
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    border: 2px solid #ffd700;
+    border-radius: 15px;
+    padding: 1.5rem 1rem;
+    min-width: 120px;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.time-unit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.time-unit:hover::before {
+    left: 100%;
+}
+
+.time-unit:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.5);
+}
+
+.number {
+    display: block;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+    margin-bottom: 0.5rem;
+    font-family: 'Courier New', monospace;
+}
+
+.label {
+    display: block;
+    font-size: 1rem;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 300;
+}
+
+.message {
+    font-size: 2rem;
+    color: #ff6b6b;
+    text-shadow: 0 0 15px #ff6b6b;
+    margin-top: 2rem;
+    font-weight: bold;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.fireworks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.firework {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    animation: firework 3s infinite;
+}
+
+.firework:nth-child(1) {
+    top: 20%;
+    left: 20%;
+    background: #ffd700;
+    animation-delay: 0s;
+}
+
+.firework:nth-child(2) {
+    top: 30%;
+    right: 20%;
+    background: #ff6b6b;
+    animation-delay: 0.5s;
+}
+
+.firework:nth-child(3) {
+    bottom: 30%;
+    left: 30%;
+    background: #4ecdc4;
+    animation-delay: 1s;
+}
+
+.firework:nth-child(4) {
+    bottom: 20%;
+    right: 30%;
+    background: #45b7d1;
+    animation-delay: 1.5s;
+}
+
+.firework:nth-child(5) {
+    top: 50%;
+    left: 50%;
+    background: #96ceb4;
+    animation-delay: 2s;
+}
+
+@keyframes firework {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .title {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .countdown-container {
+        gap: 1rem;
+    }
+    
+    .time-unit {
+        min-width: 100px;
+        padding: 1rem 0.5rem;
+    }
+    
+    .number {
+        font-size: 2.5rem;
+    }
+    
+    .label {
+        font-size: 0.9rem;
+    }
+    
+    .message {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 2rem;
+    }
+    
+    .countdown-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    
+    .time-unit {
+        min-width: 200px;
+    }
+}
